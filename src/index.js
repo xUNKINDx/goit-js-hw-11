@@ -1,5 +1,6 @@
 import { Notify } from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 import { getPhotos } from './getPhotos/getPhotos';
 
 const refs = {
