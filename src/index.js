@@ -17,7 +17,7 @@ let searchText;
 
 refs.searchForm.addEventListener('submit', onSearchFormSubmitHandler);
 
-const throttledHandler = throttle(onWindowScrollHandler, 300);
+const throttledOnWindowScrollHandler = throttle(onWindowScrollHandler, 300);
 
 const lightbox = new SimpleLightbox('.gallery a');
 
@@ -37,7 +37,24 @@ function onSearchFormSubmitHandler(event) {
   }
 
   getAndDisplayPhotos(searchText);
-  window.addEventListener('scroll', throttledHandler);
+  window.addEventListener('scroll', throttledOnWindowScrollHandler);
+}
+
+function onWindowScrollHandler(event) {
+  const endOfPage =
+    window.innerHeight + window.pageYOffset >= document.body.offsetHeight;
+
+  if (endOfPage) {
+    page++;
+    if (page * ITEMS_PER_PAGE >= totalHits) {
+      removeInfiniteScroll();
+    }
+    getAndDisplayPhotos(searchText);
+  }
+}
+
+function removeInfiniteScroll() {
+  window.removeEventListener('scroll', throttledOnWindowScrollHandler);
 }
 
 function getAndDisplayPhotos() {
@@ -100,19 +117,3 @@ function displayPhotos(photos) {
 
   lightbox.refresh();
 }
-
-function onWindowScrollHandler(event) {
-  const endOfPage =
-    window.innerHeight + window.pageYOffset >= document.body.offsetHeight;
-  if (endOfPage) {
-    page++;
-    if (page * ITEMS_PER_PAGE >= totalHits) {
-      removeInfiniteScroll();
-    }
-    getAndDisplayPhotos(searchText);
-  }
-}
-
-const removeInfiniteScroll = () => {
-  window.removeEventListener('scroll', throttledHandler);
-};
