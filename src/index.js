@@ -78,4 +78,6 @@ function displayPhotos(photos) {
     )
     .join('');
   refs.gallery.insertAdjacentHTML('beforeend', markup);
+
+  lightbox.refresh();
 }
