@@ -3,33 +3,43 @@ import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import { getPhotos } from './getPhotos/getPhotos';
 
+const ITEMS_PER_PAGE = 40;
+
 const refs = {
   searchForm: document.querySelector('.search-form'),
   gallery: document.querySelector('.gallery'),
+  loadMore: document.querySelector('.load-more'),
 };
 
-refs.searchForm.addEventListener('submit', onSearchFormSubmitHandler);
+let page = 1;
+let totalHits = 0;
+let searchText;
 
+refs.searchForm.addEventListener('submit', onSearchFormSubmitHandler);
+refs.loadMore.addEventListener('click', onLoadMoreClickHandler);
 const lightbox = new SimpleLightbox('.gallery a');
 
 function onSearchFormSubmitHandler(event) {
   event.preventDefault();
+  refs.gallery.innerHTML = '';
+  page = 1;
+  refs.loadMore.style.display = 'none';
 
   const {
     elements: { searchQuery },
   } = event.currentTarget;
 
-  const text = searchQuery.value.trim();
+  searchText = searchQuery.value.trim();
 
-  if (text === '' || text === undefined) {
+  if (searchText === '' || searchText === undefined) {
     return;
-    refs.gallery.innerHTML = '';
   }
-  getPhotos(text).then(photos => {
-    console.log(photos);
 
-    refs.gallery.innerHTML = '';
+  getAndDisplayPhotos(searchText);
+}
 
+function getAndDisplayPhotos() {
+  getPhotos(searchText, page, ITEMS_PER_PAGE).then(photos => {
     if (photos.totalHits === 0) {
       Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
@@ -38,6 +48,18 @@ function onSearchFormSubmitHandler(event) {
     }
 
     displayPhotos(photos.hits);
+    totalHits = photos.totalHits;
+
+    if (page === 1) {
+      Notify.info(`Hooray! We found ${totalHits} images.`);
+    }
+
+    if (page * ITEMS_PER_PAGE < totalHits) {
+      refs.loadMore.style.display = 'flex';
+    } else {
+      refs.loadMore.style.display = 'none';
+      Notify.info("We're sorry, but you've reached the end of search results.");
+    }
   });
 }
 
@@ -47,7 +69,7 @@ function displayPhotos(photos) {
       photo =>
         `<div class="gallery__item">            
             <a href="${photo.largeImageURL}">
-              <img class="gallery__image" src="${photo.webformatURL}" alt="" width ="350px" height ="230px" loading="lazy" />
+              <img class="gallery__image" src="${photo.webformatURL}" alt="${photo.tags}" width ="350px" height ="230px" loading="lazy" />
             </a>
             <div class="info">
             <p class="info-item">
@@ -77,4 +99,9 @@ function displayPhotos(photos) {
   refs.gallery.insertAdjacentHTML('beforeend', markup);
 
   lightbox.refresh();
+}
+
+function onLoadMoreClickHandler(event) {
+  page++;
+  getAndDisplayPhotos(searchText);
 }

@@ -7,10 +7,12 @@ const IMAGE_TYPE = 'photo';
 const ORIENTATION = 'horizontal';
 const SAFESEARCH = 'true';
 
-async function getPhotos(searchText) {
+
+async function getPhotos(searchText, page, per_page) {
   const query = encodeURIComponent(searchText.replace(' ', '+'));
 
-  const url = `${URI}?key=${API_KEY}&q=${query}&image_type=${IMAGE_TYPE}&orientation=${ORIENTATION}&safesearch=${SAFESEARCH}`;
+  const url = `${URI}?key=${API_KEY}&q=${query}&image_type=${IMAGE_TYPE}&orientation=${ORIENTATION}&safesearch=${SAFESEARCH}
+              &per_page=${per_page}&page=${page}`;
   try {
     const response = await axios.get(url);
     return response.data;
