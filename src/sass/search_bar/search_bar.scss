@@ -10,14 +10,6 @@
   background-color: royalblue;
 }
 
-.load-more {
-  display: flex;
-  margin-left: auto;
-  margin-right: auto;
-  display: none;
-  position: relative;
-}
-
 .info {
   display: flex;
   justify-content: space-between;
@@ -58,7 +50,7 @@
 .gallery__image {
   display: block;
 
-  //transition: transform var(--animation-duration) var(--timing-function);
+  transition: transform var(--animation-duration) var(--timing-function);
 }
 
 .gallery__link {
