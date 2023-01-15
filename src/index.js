@@ -10,7 +10,7 @@ const refs = {
 
 refs.searchForm.addEventListener('submit', onSearchFormSubmitHandler);
 
-new SimpleLightbox('.gallery a');
+const lightbox = new SimpleLightbox('.gallery a');
 
 function onSearchFormSubmitHandler(event) {
   event.preventDefault();
@@ -42,9 +42,6 @@ function onSearchFormSubmitHandler(event) {
 }
 
 function displayPhotos(photos) {
-  // <a class="gallery__item" href="${photo.original}">
-  //     <img class="gallery__image" src="${photo.preview}" alt="${photo.description}" />
-  // </a>
   const markup = photos
     .map(
       photo =>
