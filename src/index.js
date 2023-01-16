@@ -36,7 +36,7 @@ function onSearchFormSubmitHandler(event) {
     return;
   }
 
-  getAndDisplayPhotos(searchText);
+  getAndDisplayFirstPage(searchText);
   window.addEventListener('scroll', throttledOnWindowScrollHandler);
 }
 
@@ -49,7 +49,7 @@ function onWindowScrollHandler(event) {
     if (page * ITEMS_PER_PAGE >= totalHits) {
       removeInfiniteScroll();
     }
-    getAndDisplayPhotos(searchText);
+    getAndDisplayNewPage(searchText);
   }
 }
 
@@ -57,7 +57,7 @@ function removeInfiniteScroll() {
   window.removeEventListener('scroll', throttledOnWindowScrollHandler);
 }
 
-function getAndDisplayPhotos() {
+function getAndDisplayFirstPage() {
   getPhotos(searchText, page, ITEMS_PER_PAGE).then(photos => {
     if (photos.totalHits === 0) {
       Notify.failure(
@@ -69,12 +69,19 @@ function getAndDisplayPhotos() {
     displayPhotos(photos.hits);
     totalHits = photos.totalHits;
 
-    if (page === 1) {
-      Notify.info(`Hooray! We found ${totalHits} images.`);
-    }
+    Notify.info(`Hooray! We found ${totalHits} images.`);
 
-    if (page * ITEMS_PER_PAGE < totalHits) {
-    } else {
+    if (page * ITEMS_PER_PAGE >= totalHits) {
+      Notify.info("We're sorry, but you've reached the end of search results.");
+    }
+  });
+}
+
+function getAndDisplayNewPage() {
+  getPhotos(searchText, page, ITEMS_PER_PAGE).then(photos => {
+    displayPhotos(photos.hits);
+
+    if (page * ITEMS_PER_PAGE >= totalHits) {
       Notify.info("We're sorry, but you've reached the end of search results.");
     }
   });
@@ -89,22 +96,22 @@ function displayPhotos(photos) {
               <img class="gallery__image" src="${photo.webformatURL}" alt="${photo.tags}" width ="350px" height ="230px" loading="lazy" />
             </a>
             <div class="info">
-            <p class="info-item">
+            <p class="info__item">
                 <b>Likes</b>
                 <br>
                 ${photo.likes}
             </p>
-            <p class="info-item">
+            <p class="info__item">
                 <b>Views</b>
                 <br>
                 ${photo.views}
             </p>
-            <p class="info-item">
+            <p class="info__item">
                 <b>Comments</b>
                 <br>
                 ${photo.comments}
             </p>
-            <p class="info-item">
+            <p class="info__item">
                 <b>Downloads</b>
                 <br>
                 ${photo.downloads}

@@ -1,4 +1,3 @@
-@import '~node_modules/modern-normalize/modern-normalize.css';
 .search-form {
   display: flex;
   position: fixed;
@@ -64,4 +63,4 @@
 
 .gallery__link:hover {
   cursor: zoom-in;
-}/*# sourceMappingURL=index.css.map */
+}/*# sourceMappingURL=search_bar.css.map */
